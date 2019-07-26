@@ -54,4 +54,6 @@ dependencies {
     implementation 'android.arch.persistence.room:runtime:+'
     annotationProcessor "android.arch.lifecycle:compiler:+"
     annotationProcessor "android.arch.persistence.room:compiler:+"
+
+    implementation 'com.mikhaellopez:circularimageview:4.0.1'
 }

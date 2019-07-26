@@ -2,6 +2,7 @@ package com.android.app.mvvm;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.app.mvvm.data.Item;
 import com.android.app.mvvm.viewmodels.MainViewModels;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mainViewModel.init();
-
+        toggleLoader(true);
         RecyclerView recyclerView = findViewById(R.id.listview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -49,50 +51,52 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ListViewAdapter(mainViewModel.imagesVisible);
         recyclerView.setAdapter(adapter);
 
-        subscriptions.add(mainViewModel.getTrendingReposList().subscribe(this::onResponse,this::onFailure));
-        shimmerFrameLayout.startShimmerAnimation();
-
-        swipeRefreshLayout.setOnRefreshListener( () -> {
-                mainViewModel.getTrendingReposList().subscribe(MainActivity.this::onResponse,MainActivity.this::onFailure);
+        mainViewModel.getShowLoader().observe(this, aBoolean -> {
+            if (!aBoolean) toggleLoader(false);
         });
 
+        subscriptions.add(mainViewModel.getTrendingReposList().subscribe(this::onResponse,this::onFailure));
+
+
+        swipeRefreshLayout.setOnRefreshListener( () -> {
+            mainViewModel.getTrendingReposList().subscribe(MainActivity.this::onResponse,MainActivity.this::onFailure);
+            adapter.getItems().clear();
+            adapter.notifyDataSetChanged();
+        });
+
+        //swipeRefreshLayout.post(()-> {swipeRefreshLayout.setRefreshing(true);});
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        shimmerFrameLayout.startShimmerAnimation();
+        //toggleLoader(true);
     }
 
     private void onResponse(Item viewModel) {
         Log.d("Success : ", viewModel.itemDevName);
-        shimmerFrameLayout.stopShimmerAnimation();
-        shimmerFrameLayout.setVisibility(View.GONE);
-        mainViewModel.toggleImageVisibility();
         adapter.add(viewModel);
-        swipeRefreshLayout.setRefreshing(false);
+        mainViewModel.toggleImageVisibility();
+        toggleLoader(false);
     }
 
     private void onFailure(Throwable t) {
         Log.e("Network error: ", t.getMessage());
-        shimmerFrameLayout.stopShimmerAnimation();
-        shimmerFrameLayout.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
+        Toast.makeText(this,"An error occured1 , Try Again!",Toast.LENGTH_SHORT).show();
+        toggleLoader(false);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        shimmerFrameLayout.stopShimmerAnimation();
-        shimmerFrameLayout.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
+        toggleLoader(false);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         subscriptions.unsubscribe();
-        swipeRefreshLayout.setRefreshing(false);
+        toggleLoader(false);
     }
 
     @Override
@@ -104,5 +108,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleLoader(boolean show){
+        if (show){
+            if (!shimmerFrameLayout.isAnimationStarted())
+                shimmerFrameLayout.startShimmerAnimation();
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            shimmerFrameLayout.stopShimmerAnimation();
+            shimmerFrameLayout.setVisibility(View.GONE);
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }

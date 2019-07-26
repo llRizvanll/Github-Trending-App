@@ -12,13 +12,10 @@ import com.android.app.mvvm.models.TrendingRepoModel;
 @Entity(tableName = "Item",indices = @Index(value = {"item_repo_name"}, unique = true))
 public class Item {
 
-    @PrimaryKey(autoGenerate = true)
-    public long _id;
-
     @NonNull
+    @PrimaryKey
     @ColumnInfo(name = "item_repo_name")
-    public  String itemRepoName;
-
+    public String itemRepoName;
     public String itemImageUrl;
     public String itemDevName;
     public String language;
@@ -37,5 +34,38 @@ public class Item {
     }
 
     public Item() {
+    }
+
+    @NonNull
+    public String getItemRepoName() {
+        return itemRepoName;
+    }
+
+    public void setItemRepoName(@NonNull String itemRepoName) {
+        this.itemRepoName = itemRepoName;
+    }
+
+    public String getItemImageUrl() {
+        return itemImageUrl;
+    }
+
+    public void setItemImageUrl(String itemImageUrl) {
+        this.itemImageUrl = itemImageUrl;
+    }
+
+    public String getItemDevName() {
+        return itemDevName;
+    }
+
+    public void setItemDevName(String itemDevName) {
+        this.itemDevName = itemDevName;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

@@ -25,10 +25,10 @@ public abstract class Db extends RoomDatabase {
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         void InsertItem(Item item);
 
-        @Update
-        int updateItem(Item item);
+        @Update(onConflict = OnConflictStrategy.REPLACE)
+        void updateItem(Item item);
 
-        @Query("SELECT * from Item")
+        @Query("SELECT DISTINCT * from Item")
         List<Item> getTrendingRepos();
 
 

@@ -9,12 +9,13 @@ import rx.Observable;
 
 public class MainViewModels extends ViewModel {
 
-    MutableLiveData<Observable<Item>> trendingRepoModelList = new MutableLiveData<>();
+    MutableLiveData<Boolean> showLoader = new MutableLiveData<>();
+
     private DataRepository dataRepository = null;
 
     public void init(){
         dataRepository = DataRepository.getInstance();
-        dataRepository.getTrendingRepos();
+        dataRepository.loadTrendingRepos();
     }
 
     public final ObservableField<Boolean> imagesVisible = new ObservableField<>(true);
@@ -23,11 +24,12 @@ public class MainViewModels extends ViewModel {
         imagesVisible.set(imagesVisible.get());
     }
 
-    public MutableLiveData<Observable<Item>> getTrendingRepoModelList() {
-        return trendingRepoModelList;
-    }
-
     public Observable<Item> getTrendingReposList() {
         return dataRepository.loadTrendingRepos();
     }
+
+    public MutableLiveData<Boolean> getShowLoader() {
+        return showLoader;
+    }
+
 }

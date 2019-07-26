@@ -19,6 +19,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.VH> {
 
     private final ObservableField<Boolean> imagesVisible;
 
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
     ListViewAdapter(ObservableField<Boolean> imagesVisible) {
         this.imagesVisible = imagesVisible;
     }

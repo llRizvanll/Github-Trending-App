@@ -2,6 +2,7 @@ package com.android.app.mvvm.data;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -33,10 +34,16 @@ public class DataRepository implements DataSource {
     }
 
     public Observable<Item> loadTrendingRepos(){
-        if (NetworkUtils.isConnected(App.INSTANCE))
-            loadRepoList().subscribe(this::onResponse,this::onFailure);
+        Observable<Item> itemObservable ;
+        if (!NetworkUtils.isConnected(App.INSTANCE))
+            itemObservable = LocalDataSource.INSTANCE.loadTrendingRepos();
+        else{
+            itemObservable = loadRepoList();
+        }
 
-        return LocalDataSource.INSTANCE.loadTrendingRepos();
+        itemObservable.subscribe(this::onResponse,this::onFailure);
+
+        return itemObservable;
     }
 
     private void onResponse(Item item) {
@@ -45,6 +52,7 @@ public class DataRepository implements DataSource {
 
     private void onFailure(Throwable t) {
         Log.e("Network error: ", t.getMessage());
+        Toast.makeText(App.INSTANCE,"An error occured , Try Again!",Toast.LENGTH_SHORT).show();
     }
 
     public Observable<Item> loadTrendingDevs(){
