@@ -26,9 +26,9 @@
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/item_image"
-            android:layout_width="80dp"
+            android:layout_width="60dp"
             android:contentDescription="image"
-            android:layout_height="80dp"
+            android:layout_height="60dp"
             app:civ_shadow="true"
             app:civ_shadow_radius="2"
             app:imageUrl="@{item.itemImageUrl}"
@@ -68,7 +68,7 @@
                 android:maxLines="1"
                 android:textColor="@color/cardview_dark_background"
                 android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:fontFamily="sans-serif-medium"
                 android:text="@{item.itemRepoName}"
                 tools:text="application/java" />
@@ -84,7 +84,8 @@
                 android:maxLines="1"
                 android:textColor="@color/cardview_dark_background"
                 android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="14sp"
+                android:visibility="gone"
                 android:fontFamily="sans-serif-medium"
                 android:text="@{item.language}"
                 tools:text="application/java" />
